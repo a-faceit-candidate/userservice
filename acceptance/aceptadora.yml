@@ -1,0 +1,26 @@
+services:
+  userservice:
+    image: docker.local/userservice:latest
+    ports:
+      - 8080:8080
+    env_file:
+      - ${YAMLDIR}/config/userservice.env
+
+  mysql:
+    image: docker.io/library/mysql:5.7
+    ports:
+      - 3306:3306
+    env_file:
+      - ${YAMLDIR}/config/mysql.env
+    binds:
+      - ${YAMLDIR}/../schema/user.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    ignore_logs: true
+
+  # nsqd stack should usually have a nsqlookupd but just a nsqd is enough for the acceptance test
+  nsqd:
+    image: docker.io/nsqio/nsq:v1.2.0
+    ignore_logs: true
+    ports:
+      - 4151:4151
+      - 4150:4150
+    command: [ "/nsqd" ]
