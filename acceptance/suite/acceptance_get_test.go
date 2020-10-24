@@ -15,9 +15,12 @@ func (s *acceptanceSuite) TestGetUser() {
 	s.Run("happy case", func() {
 		// we use our own API for creating users as it's more maintainable than seeding the table
 		created, err := s.client.CreateUser(ctx, &restuser.User{
-			Name:    "john doe",
-			Email:   "john@faceit.com",
-			Country: "es",
+			FirstName: someFirstName,
+			LastName:  someLastName,
+			Name:      someName,
+			Email:     someEmail,
+			Password:  somePassword,
+			Country:   someCountry,
 		})
 		s.Require().NoError(err)
 
@@ -26,9 +29,13 @@ func (s *acceptanceSuite) TestGetUser() {
 		s.Equal(created.ID, got.ID)
 		s.Equal(created.CreatedAt, got.CreatedAt)
 		s.Equal(created.UpdatedAt, got.UpdatedAt)
+		s.Equal(someFirstName, got.FirstName)
+		s.Equal(someLastName, got.LastName)
 		s.Equal(someName, got.Name)
 		s.Equal(someEmail, got.Email)
 		s.Equal(someCountry, got.Country)
+		s.Equal(created.PasswordHash, got.PasswordHash)
+		s.Equal(created.PasswordSalt, got.PasswordSalt)
 	})
 
 	s.Run("not found", func() {

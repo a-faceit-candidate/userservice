@@ -2,7 +2,6 @@ package suite
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"time"
 
@@ -16,15 +15,14 @@ func (s *acceptanceSuite) TestDeleteUser() {
 	s.Run("happy case", func() {
 		// we use our own API for creating users as it's more maintainable than seeding the table
 		created, err := s.client.CreateUser(ctx, &restuser.User{
-			Name:    "john doe",
-			Email:   "john@faceit.com",
-			Country: "es",
+			FirstName: someFirstName,
+			LastName:  someLastName,
+			Name:      someName,
+			Email:     someEmail,
+			Password:  somePassword,
+			Country:   someCountry,
 		})
 		s.Require().NoError(err)
-
-		created.Name = someOtherName
-		created.Email = someOtherEmail
-		created.Country = someOtherCountry
 
 		err = s.client.DeleteUser(ctx, created.ID)
 		s.Require().NoError(err)
@@ -32,11 +30,7 @@ func (s *acceptanceSuite) TestDeleteUser() {
 		_, err = s.client.GetUser(ctx, created.ID)
 		s.Require().Error(err)
 
-		if restError := (restuser.Error{}); errors.As(err, &restError) {
-			s.Equal(http.StatusNotFound, restError.StatusCode)
-		} else {
-			s.FailNowf("Unexpected error received", "Expected a restuser.Error, got %T", err)
-		}
+		s.assertIsRestClientError(err, http.StatusNotFound)
 
 		select {
 		case id := <-s.userDeletedMessages:

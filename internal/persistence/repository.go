@@ -15,6 +15,7 @@ type Repository interface {
 	// Update will update the user with same ID and same prevUpdatedAt timestamp,
 	// if the UpdatedAt in the DB differs, it fail with ErrConflict.
 	// If user doesn't exist, it will fail with ErrNotFound
+	// If PasswordHash or PasswordSalt are not provided, they won't be updated
 	Update(ctx context.Context, user *model.User, prevUpdatedAt time.Time) error
 	// Get will retrieve a user with the ID provided, or ErrNotFound if not found.
 	Get(context.Context, string) (*model.User, error)

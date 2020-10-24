@@ -13,8 +13,12 @@ import (
 )
 
 var (
-	mockedNow  = time.Date(2020, 1, 2, 3, 4, 5, int(time.Millisecond+2*time.Microsecond+3*time.Nanosecond), time.UTC)
-	mockedUUID = "123e4567-e89b-12d3-a456-426614174000"
+	mockedNow    = time.Date(2020, 1, 2, 3, 4, 5, int(time.Millisecond+2*time.Microsecond+3*time.Nanosecond), time.UTC)
+	mockedUUID   = "123e4567-e89b-12d3-a456-426614174000"
+	mockedSalt   = "1234567890abcdef1234567890abcdef"
+	somePassword = "password"
+	// someHashedPassword is calculated running 'echo -n "password1234567890abcdef1234567890abcdef" | sha256sum'
+	someHashedPassword = "c1406c11bb520b4f012aa0e95d4704d0001e75ee0d43baa8e8af69ce5616cea2"
 )
 
 func TestMain(t *testing.M) {
@@ -24,18 +28,25 @@ func TestMain(t *testing.M) {
 	// all are valid options, I chose this one
 	timeNow = func() time.Time { return mockedNow }
 	uuidv1 = func() string { return mockedUUID }
+	randomSalt = func() string { return mockedSalt }
 	os.Exit(t.Run())
 }
 
 func TestServiceImpl_Create(t *testing.T) {
 	t.Run("happy case", func(t *testing.T) {
 		user := model.User{
-			Name:    "foo",
-			Email:   "bar@hotmail.com",
-			Country: "zz",
+			FirstName: "first",
+			LastName:  "last",
+			Name:      "foo",
+			Email:     "bar@hotmail.com",
+			Password:  somePassword,
+			Country:   "zz",
 		}
 		expectedRepositoryUser := user
 		expectedRepositoryUser.ID = mockedUUID
+		expectedRepositoryUser.PasswordHash = someHashedPassword
+		expectedRepositoryUser.PasswordSalt = mockedSalt
+		expectedRepositoryUser.Password = ""
 
 		expectedRepositoryUser.CreatedAt = mockedNow.Truncate(time.Microsecond)
 		expectedRepositoryUser.UpdatedAt = mockedNow.Truncate(time.Microsecond)

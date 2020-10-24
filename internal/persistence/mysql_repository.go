@@ -125,13 +125,13 @@ func (r *MysqlRepository) Delete(ctx context.Context, id string) error {
 }
 
 func (r *MysqlRepository) ListAll(ctx context.Context) ([]*model.User, error) {
-	sb := sqlStruct.SelectFrom(table)
+	sb := sqlStruct.SelectFromForTag(table, "nopassword")
 	sb = sb.OrderBy("id").Asc()
 	return r.list(ctx, sb)
 }
 
 func (r *MysqlRepository) ListCountry(ctx context.Context, countryCode string) ([]*model.User, error) {
-	sb := sqlStruct.SelectFrom(table)
+	sb := sqlStruct.SelectFromForTag(table, "nopassword")
 	sb = sb.Where(sb.Equal("country", countryCode))
 	sb = sb.OrderBy("id").Asc()
 	return r.list(ctx, sb)
@@ -165,32 +165,44 @@ func (r *MysqlRepository) list(ctx context.Context, builder *sqlbuilder.SelectBu
 var sqlStruct = sqlbuilder.NewStruct(new(sqlUser))
 
 type sqlUser struct {
-	ID        string    `db:"id"`
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
-	Name      string    `db:"name"`
-	Email     string    `db:"email"`
-	Country   string    `db:"country"`
+	ID           string    `db:"id"`
+	CreatedAt    time.Time `db:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at"`
+	FirstName    string    `db:"first_name"`
+	LastName     string    `db:"last_name"`
+	Name         string    `db:"name"`
+	Email        string    `db:"email"`
+	PasswordHash string    `db:"password_hash" fieldopt:"omitempty"`
+	PasswordSalt string    `db:"password_salt" fieldopt:"omitempty"`
+	Country      string    `db:"country"`
 }
 
 func userToSQL(u *model.User) *sqlUser {
 	return &sqlUser{
-		ID:        u.ID,
-		CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt,
-		Name:      u.Name,
-		Email:     u.Email,
-		Country:   u.Country,
+		ID:           u.ID,
+		CreatedAt:    u.CreatedAt,
+		UpdatedAt:    u.UpdatedAt,
+		FirstName:    u.FirstName,
+		LastName:     u.LastName,
+		Name:         u.Name,
+		Email:        u.Email,
+		Country:      u.Country,
+		PasswordHash: u.PasswordHash,
+		PasswordSalt: u.PasswordSalt,
 	}
 }
 
 func sqlToUser(sq *sqlUser) *model.User {
 	return &model.User{
-		ID:        sq.ID,
-		CreatedAt: sq.CreatedAt,
-		UpdatedAt: sq.UpdatedAt,
-		Name:      sq.Name,
-		Email:     sq.Email,
-		Country:   sq.Country,
+		ID:           sq.ID,
+		CreatedAt:    sq.CreatedAt,
+		UpdatedAt:    sq.UpdatedAt,
+		FirstName:    sq.FirstName,
+		LastName:     sq.LastName,
+		Name:         sq.Name,
+		Email:        sq.Email,
+		Country:      sq.Country,
+		PasswordHash: sq.PasswordHash,
+		PasswordSalt: sq.PasswordSalt,
 	}
 }

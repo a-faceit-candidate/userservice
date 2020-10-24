@@ -10,6 +10,8 @@ This service has MySQL and NSQ as upstream dependencies.
 
 This service exposes basic prometheus metrics for the REST operations it handles.
 
+This service is not intended to be exposed to the internet as it does not handle authentication.
+
 This service exposes a `/status` endpoint for basic healthchecks to be performed.
 
 This service is configurable using environment variables. 
@@ -114,3 +116,11 @@ You'll find a lot of pointers that can raise you concerns of mutability of garba
 Lack of metrics: I'd love to add metrics to MySQL repository, for instance, however, I'd rather add them to a common client wrapper to keep those metrics consistent across all our services. I'd also add some circuit breakers to that client too. Same happens with the NSQ client. 
 
 `service.ServiceImpl` could also have some metrics, however in this small service they wouldn't provide more information than the immediately previous transport layer.
+
+## Password handling
+
+This topic deserves a special mention. Password handling is weird in this service (for instance, we wouldn't require the password on every update right? 
+OTOH, other services that just want to render a username, retrieve the password hash/salt as a side effect). 
+Definitely this can be improved, but in general terms this is a smell.
+
+In my opinion, this authentication details should be stored in a completely different service (a user can have a password or it may not have one, in 2020 there are tons of alternatives for authentication).

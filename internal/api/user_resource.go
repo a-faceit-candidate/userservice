@@ -48,11 +48,6 @@ func (res *UsersResource) post(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorResponse("Can't bind request payload: %s", err))
 		return
 	}
-	if ru.ID != "" || ru.CreatedAt != "" || ru.UpdatedAt != "" {
-		log.For(ctx).Infof("Received a payload with some non empty fields")
-		c.JSON(http.StatusBadRequest, errorResponse("Fields id, created_at and updated_at should be empty"))
-		return
-	}
 
 	user, err := restToUser(ru)
 	if err != nil {
@@ -209,23 +204,33 @@ func restToUser(ru *restuser.User) (u *model.User, err error) {
 	}
 
 	return &model.User{
-		ID:        ru.ID,
-		CreatedAt: createdAt,
-		UpdatedAt: updatedAt,
-		Name:      ru.Name,
-		Email:     ru.Email,
-		Country:   ru.Country,
+		ID:           ru.ID,
+		CreatedAt:    createdAt,
+		UpdatedAt:    updatedAt,
+		FirstName:    ru.FirstName,
+		LastName:     ru.LastName,
+		Name:         ru.Name,
+		Email:        ru.Email,
+		Password:     ru.Password,
+		PasswordHash: ru.PasswordHash,
+		PasswordSalt: ru.PasswordSalt,
+		Country:      ru.Country,
 	}, nil
 }
 
 func userToREST(u *model.User) restuser.User {
 	return restuser.User{
-		ID:        u.ID,
-		CreatedAt: u.CreatedAt.Format(time.RFC3339Nano),
-		UpdatedAt: u.UpdatedAt.Format(time.RFC3339Nano),
-		Name:      u.Name,
-		Email:     u.Email,
-		Country:   u.Country,
+		ID:           u.ID,
+		CreatedAt:    u.CreatedAt.Format(time.RFC3339Nano),
+		UpdatedAt:    u.UpdatedAt.Format(time.RFC3339Nano),
+		FirstName:    u.FirstName,
+		LastName:     u.LastName,
+		Name:         u.Name,
+		Email:        u.Email,
+		Password:     u.Password,
+		PasswordHash: u.PasswordHash,
+		PasswordSalt: u.PasswordSalt,
+		Country:      u.Country,
 	}
 }
 

@@ -12,16 +12,22 @@ func (s *acceptanceSuite) TestListUsers() {
 	defer cancel()
 
 	_, err := s.client.CreateUser(ctx, &restuser.User{
-		Name:    someName,
-		Email:   someEmail,
-		Country: someCountry,
+		FirstName: someFirstName,
+		LastName:  someLastName,
+		Name:      someName,
+		Email:     someEmail,
+		Password:  somePassword,
+		Country:   someCountry,
 	})
 	s.Require().NoError(err)
 
 	_, err = s.client.CreateUser(ctx, &restuser.User{
-		Name:    someOtherName,
-		Email:   someOtherEmail,
-		Country: someOtherCountry,
+		FirstName: someOtherFirstName,
+		LastName:  someOtherLastName,
+		Name:      someOtherName,
+		Email:     someOtherEmail,
+		Password:  someOtherPassword,
+		Country:   someOtherCountry,
 	})
 	s.Require().NoError(err)
 

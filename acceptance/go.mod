@@ -3,7 +3,7 @@ module github.com/a-faceit-candidate/userservice/acceptance
 go 1.14
 
 require (
-	github.com/a-faceit-candidate/restuser v1.0.0
+	github.com/a-faceit-candidate/restuser v1.1.1
 	github.com/cabify/aceptadora v0.1.0
 	github.com/colega/envconfig v0.1.0
 	github.com/go-sql-driver/mysql v1.5.0

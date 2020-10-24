@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
-	github.com/a-faceit-candidate/restuser v1.0.0
+	github.com/a-faceit-candidate/restuser v1.1.1
 	github.com/colega/envconfig v0.1.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/assert/v2 v2.0.1
